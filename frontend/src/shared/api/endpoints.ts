@@ -78,8 +78,11 @@ export function updateProfile(userId: string, data: UpdateProfileRequest): Promi
   })
 }
 
-export function getAcquisitions(): Promise<Acquisition[]> {
-  // getAcquisitions: GET /acquisitions — fetch satellite ore deposit scan data.
-  // Returns array of ~300 { timestamp, ore_sites } entries spanning ~25 days.
-  return api<Acquisition[]>('/acquisitions')
+export async function getAcquisitions(): Promise<Acquisition[]> {
+  const raw = await api<Array<{ timestamp: number; ore_sites?: number; sites?: number }>>('/acquisitions')
+  if (!Array.isArray(raw)) return []
+  return raw.map((item) => ({
+    timestamp: item.timestamp,
+    ore_sites: item.ore_sites ?? item.sites ?? 0,
+  }))
 }
