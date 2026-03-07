@@ -18,7 +18,7 @@ const ERROR_FIELDS_REQUIRED = 'Please fill out all fields.'
 const ERROR_USERNAME_REQUIRED = 'Please fill out username.'
 const ERROR_PASSWORD_REQUIRED = 'Please fill out password.'
 const ERROR_INVALID_CREDENTIALS =
-  'Invalid credentials. Please check your username and password. 5 attempts left.'
+  'Invalid credentials. Please check your username and password.'
 
 export function LoginForm() {
   const [userId, setUserId] = useState('')
