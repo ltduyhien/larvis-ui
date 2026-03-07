@@ -28,6 +28,14 @@ A React frontend for the LARVIS station API — a space-terminal UI for viewing 
 2. Docker and Docker Compose (for production / full stack)
 3. Playwright browsers for E2E tests: `npx playwright install`
 
+### Clone and checkout
+
+```bash
+git clone <repo-url>
+cd larvis
+git checkout main
+```
+
 ### Run the full stack (backend + frontend)
 
 ```bash
