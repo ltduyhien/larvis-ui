@@ -65,15 +65,6 @@ Open [http://localhost:5173](http://localhost:5173). Vite proxies `/api` to the 
 
 API base URL: Set `VITE_API_URL` in `.env` (e.g. `http://localhost:8080`) if the backend is not on the same origin.
 
-### Backend only
-
-```bash
-./backend/larvis
-# Or custom port: ./backend/larvis -addr :9090
-```
-
-Backend listens on port 8080 by default.
-
 ---
 
 ## Production Deployment
