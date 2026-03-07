@@ -25,7 +25,6 @@ export function useChangePassword() {
 
       setIsLoading(true)
       try {
-        // Verify old password by attempting login
         await login({ user_id: userId, password: oldPassword })
 
         const user = await getUser(userId)
@@ -34,7 +33,6 @@ export function useChangePassword() {
           password: newPassword,
         })
 
-        // Refresh token with new password (backend may invalidate old tokens)
         const { access } = await login({ user_id: userId, password: newPassword })
         setAccessToken(access)
 

@@ -107,10 +107,6 @@ export function groupAcquisitions(
   return { data, canPrev, canNext }
 }
 
-/**
- * Returns acquisitions for exactly ONE period (1 day, 1 week, 1 month, or 1 year).
- * periodOffset: 0 = most recent, -1 = previous, etc.
- */
 export function filterAcquisitionsForSinglePeriod(
   acquisitions: Acquisition[],
   groupBy: GroupBy,

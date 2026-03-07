@@ -10,7 +10,6 @@ export function formatUptime(ms: number): string {
 }
 
 export function totalOreSitesToday(acquisitions: Acquisition[]): number {
-  // Uses UTC date for consistency with Mars station / acquisitions timestamps
   const today = new Date().toISOString().slice(0, 10)
   return acquisitions
     .filter((a) => new Date(a.timestamp * 1000).toISOString().slice(0, 10) === today)

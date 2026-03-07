@@ -1,7 +1,3 @@
-// AuthLayout.tsx: Full-screen login layout with Mars planet background.
-// Heading + subtitle float above the card, centered vertically in the viewport.
-// Overlay darkens/lightens the background based on theme.
-
 import { Outlet } from 'react-router-dom'
 import { useTheme } from '@/shared/hooks/useTheme'
 import marsBg from '@/shared/assets/mars-bg.png'

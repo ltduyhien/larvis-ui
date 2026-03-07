@@ -1,6 +1,3 @@
-// ThemeSwitch.tsx: Fixed bottom-right button that toggles dark/light theme.
-// Sun icon when dark (click to go light), moon icon when light (click to go dark).
-
 import { useTheme } from '@/shared/hooks/useTheme'
 
 export function ThemeSwitch() {

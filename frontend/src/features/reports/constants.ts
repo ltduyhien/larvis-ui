@@ -13,7 +13,6 @@ export interface SavedReport {
   fileNames: string[]
 }
 
-// All months except the 2 most recent (descending order) have reports
 export const DUMMY_REPORTS: Record<string, SavedReport> = {
   '2025-0': {
     notes: 'Baseline established for new fiscal year. Initial sector mapping underway.',

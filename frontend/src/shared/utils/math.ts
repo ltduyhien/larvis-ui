@@ -1,6 +1,3 @@
-/**
- * Returns least-squares linear regression values for a series.
- */
 export function linearRegression(values: number[]): number[] {
   const n = values.length
   if (n === 0) return []

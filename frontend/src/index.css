@@ -5,7 +5,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    /* Mars station custom palette — change these to retheme the entire app */
     --transition-duration: 250ms;
     --tw-duration: 250ms;
     --color-mars-500: var(--mars-500);
@@ -172,7 +171,7 @@ input.humor-slider::-webkit-slider-runnable-track {
   );
 }
 input.humor-slider::-webkit-slider-thumb {
-  margin-top: -4px; /* center 16px thumb on 8px track */
+  margin-top: -4px;
 }
 input.humor-slider::-moz-range-track {
   width: 100%;
@@ -187,7 +186,6 @@ input.humor-slider::-moz-range-track {
   );
 }
 
-/* Keep autofill styling aligned with theme (Input glass / mars-input-bg) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
