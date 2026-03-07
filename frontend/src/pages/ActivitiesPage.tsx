@@ -29,15 +29,14 @@ export function ActivitiesPage() {
 
   const [uptime, setUptime] = useState<string>('—')
   useEffect(() => {
-    if (!connectedSince || error) {
-      setUptime(error ? 'Offline' : '—')
-      return
-    }
+    if (!connectedSince || error) return
     const tick = () => setUptime(formatUptime(Date.now() - connectedSince))
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [connectedSince, error])
+
+  const displayUptime = !connectedSince || error ? (error ? 'Offline' : '—') : uptime
 
   if (error) {
     return (
@@ -94,7 +93,7 @@ export function ActivitiesPage() {
         </div>
         <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3">
           <p className="text-sm text-muted-foreground">Satellite Uptime</p>
-          <p className="text-lg font-semibold text-sky-500 dark:text-[oklch(0.72_0.12_230)]">{uptime}</p>
+          <p className="text-lg font-semibold text-sky-500 dark:text-[oklch(0.72_0.12_230)]">{displayUptime}</p>
         </div>
         <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3">
           <p className="text-sm text-muted-foreground">Total Ore Sites</p>
