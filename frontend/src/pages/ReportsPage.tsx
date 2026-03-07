@@ -1,8 +1,10 @@
+import { PlaceholderPage } from './PlaceholderPage'
+
 export function ReportsPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Reports</h1>
-      <p className="text-muted-foreground">Monthly reports will appear here.</p>
-    </div>
+    <PlaceholderPage
+      title="Reports"
+      description="Monthly reports will appear here."
+    />
   )
 }
