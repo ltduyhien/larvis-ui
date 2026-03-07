@@ -8,7 +8,7 @@ import {
   avgOreSitesPerScanForMonth,
 } from '@/features/acquisitions/utils/format'
 import { Button } from '@/shared/ui/button'
-import { UtcTime } from '@/shared/ui/utc-time'
+import { PageHeader } from '@/shared/ui/page-header'
 import { cn } from '@/shared/utils/cn'
 
 const REPORTS_STORAGE_KEY = 'larvis-reports'
@@ -298,13 +298,7 @@ export function ReportsPage() {
   if (error) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4 pt-4">
-        <div className="flex shrink-0 items-center justify-between pb-6">
-          <h1 className="text-2xl">
-            <span className="font-bold">Reporting</span>
-            <span className="font-normal text-lg"> | Monthly reports and analytics</span>
-          </h1>
-          <UtcTime />
-        </div>
+        <PageHeader title="Reporting" subtitle="Monthly reports and analytics" />
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive">
           Failed to load data: {error.message}
         </div>
@@ -314,13 +308,7 @@ export function ReportsPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-6 pt-4">
-      <div className="flex shrink-0 items-center justify-between pb-6">
-        <h1 className="text-2xl">
-          <span className="font-bold">Reporting</span>
-          <span className="font-normal text-lg"> | Monthly reports and analytics</span>
-        </h1>
-        <UtcTime />
-      </div>
+      <PageHeader title="Reporting" subtitle="Monthly reports and analytics" />
 
       <div className="flex min-h-0 flex-1 overflow-hidden rounded-xl border border-border bg-card">
         <aside className="flex w-56 shrink-0 flex-col overflow-hidden border-r border-border bg-muted/40">

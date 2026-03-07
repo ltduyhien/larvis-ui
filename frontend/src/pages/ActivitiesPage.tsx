@@ -8,14 +8,7 @@ import {
   lastOreFound,
 } from '@/features/acquisitions/utils/format'
 import { Button } from '@/shared/ui/button'
-import { UtcTime } from '@/shared/ui/utc-time'
-
-const ACTIVITIES_HEADER = (
-  <h1 className="text-2xl">
-    <span className="font-bold">Activities</span>
-    <span className="font-normal text-lg"> | Satellite and resource operations</span>
-  </h1>
-)
+import { PageHeader } from '@/shared/ui/page-header'
 
 export function ActivitiesPage() {
   const {
@@ -42,10 +35,7 @@ export function ActivitiesPage() {
   if (error) {
     return (
       <div className="space-y-4 pt-4">
-        <div className="flex shrink-0 items-center justify-between pb-6">
-          {ACTIVITIES_HEADER}
-          <UtcTime />
-        </div>
+        <PageHeader title="Activities" subtitle="Satellite and resource operations" />
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive">
           Failed to load: {error.message}
         </div>
@@ -59,10 +49,7 @@ export function ActivitiesPage() {
   if (isLoading && acquisitions.length === 0) {
     return (
       <div className="pt-4">
-        <div className="flex shrink-0 items-center justify-between pb-6">
-          {ACTIVITIES_HEADER}
-          <UtcTime />
-        </div>
+        <PageHeader title="Activities" subtitle="Satellite and resource operations" />
         <p className="text-muted-foreground">Loading ore acquisition data…</p>
       </div>
     )
@@ -70,10 +57,7 @@ export function ActivitiesPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 pt-4">
-      <div className="flex shrink-0 items-center justify-between pb-6">
-        {ACTIVITIES_HEADER}
-        <UtcTime />
-      </div>
+      <PageHeader title="Activities" subtitle="Satellite and resource operations" />
 
       {hasNewData && (
         <div

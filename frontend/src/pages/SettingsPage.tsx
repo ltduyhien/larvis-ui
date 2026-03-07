@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useChangePassword } from '@/features/settings/hooks/useChangePassword'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Button } from '@/shared/ui/button'
-import { UtcTime } from '@/shared/ui/utc-time'
+import { PageHeader } from '@/shared/ui/page-header'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 
@@ -70,13 +70,7 @@ export function SettingsPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-6 pt-4">
-      <div className="flex shrink-0 items-center justify-between pb-6">
-        <h1 className="text-2xl">
-          <span className="font-bold">Settings</span>
-          <span className="font-normal text-lg"> | Station configuration</span>
-        </h1>
-        <UtcTime />
-      </div>
+      <PageHeader title="Settings" subtitle="Station configuration" />
 
       <section className="flex max-w-md flex-col gap-4 rounded-lg border border-input bg-muted/30 p-6">
         <h2 className="text-base font-semibold">Larvis Humor Setting</h2>
