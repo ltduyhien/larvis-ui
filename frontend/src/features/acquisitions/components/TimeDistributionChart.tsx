@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import type { Acquisition } from '@/shared/api/endpoints'
 import {
   ChartContainer,
@@ -8,13 +7,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/shared/ui/chart'
-import { Button } from '@/shared/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu'
+import { cn } from '@/shared/utils/cn'
+import { GroupByControls } from './GroupByControls'
 import {
   filterAcquisitionsForSinglePeriod,
   getAvailableGroupBy,
@@ -29,71 +23,81 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const GROUP_LABELS: Record<GroupBy, string> = {
-  day: 'By Day',
-  week: 'By Week',
-  month: 'By Month',
-  year: 'By Year',
+function toPercent(part: number, total: number, decimals = 1): number {
+  return Math.round((part / total) * Math.pow(10, decimals + 2)) / Math.pow(10, decimals)
 }
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-type DistributionPoint = { label: string; acquisitions: number; percentage: number }
+type DistributionPoint = { label: string; acquisitions: number; oreSites: number; percentage: number }
 
 function distributionByGroupBy(
   acquisitions: Acquisition[],
   groupBy: GroupBy
 ): DistributionPoint[] {
-  const total = acquisitions.length || 1
+  const totalOreSites =
+    acquisitions.reduce((sum, a) => sum + a.ore_sites, 0) || 1
   if (groupBy === 'day') {
-    const buckets = new Array<number>(24).fill(0)
+    const buckets = Array.from({ length: 24 }, () => ({ count: 0, oreSites: 0 }))
     for (const a of acquisitions) {
-      buckets[new Date(a.timestamp * 1000).getUTCHours()] += 1
+      const h = new Date(a.timestamp * 1000).getUTCHours()
+      buckets[h].count += 1
+      buckets[h].oreSites += a.ore_sites
     }
-    return buckets.map((count, hour) => ({
+    return buckets.map((b, hour) => ({
       label: `${hour.toString().padStart(2, '0')}:00`,
-      acquisitions: count,
-      percentage: Math.round((count / total) * 1000) / 10,
+      acquisitions: b.count,
+      oreSites: b.oreSites,
+      percentage: toPercent(b.oreSites, totalOreSites),
     }))
   }
   if (groupBy === 'week') {
-    const buckets = new Array<number>(7).fill(0)
+    const buckets = Array.from({ length: 7 }, () => ({ count: 0, oreSites: 0 }))
     for (const a of acquisitions) {
       const day = new Date(a.timestamp * 1000).getUTCDay()
       const idx = day === 0 ? 6 : day - 1
-      buckets[idx] += 1
+      buckets[idx].count += 1
+      buckets[idx].oreSites += a.ore_sites
     }
-    return buckets.map((count, i) => ({
+    return buckets.map((b, i) => ({
       label: DAY_NAMES[i],
-      acquisitions: count,
-      percentage: Math.round((count / total) * 1000) / 10,
+      acquisitions: b.count,
+      oreSites: b.oreSites,
+      percentage: toPercent(b.oreSites, totalOreSites),
     }))
   }
   if (groupBy === 'month') {
-    const buckets = new Map<number, number>()
-    for (let d = 1; d <= 31; d++) buckets.set(d, 0)
+    const buckets = new Map<number, { count: number; oreSites: number }>()
+    for (let d = 1; d <= 31; d++) buckets.set(d, { count: 0, oreSites: 0 })
     for (const a of acquisitions) {
       const d = new Date(a.timestamp * 1000).getUTCDate()
-      buckets.set(d, (buckets.get(d) ?? 0) + 1)
+      const b = buckets.get(d)!
+      b.count += 1
+      b.oreSites += a.ore_sites
+      buckets.set(d, b)
     }
     return Array.from({ length: 31 }, (_, i) => i + 1).map((d) => {
-      const count = buckets.get(d) ?? 0
+      const b = buckets.get(d) ?? { count: 0, oreSites: 0 }
       return {
         label: String(d),
-        acquisitions: count,
-        percentage: Math.round((count / total) * 1000) / 10,
+        acquisitions: b.count,
+        oreSites: b.oreSites,
+        percentage: toPercent(b.oreSites, totalOreSites),
       }
     })
   }
-  const buckets = new Array<number>(12).fill(0)
+  const buckets = Array.from({ length: 12 }, () => ({ count: 0, oreSites: 0 }))
   for (const a of acquisitions) {
-    buckets[new Date(a.timestamp * 1000).getUTCMonth()] += 1
+    const m = new Date(a.timestamp * 1000).getUTCMonth()
+    buckets[m].count += 1
+    buckets[m].oreSites += a.ore_sites
   }
-  return buckets.map((count, month) => ({
+  return buckets.map((b, month) => ({
     label: MONTH_NAMES[month],
-    acquisitions: count,
-    percentage: Math.round((count / total) * 1000) / 10,
+    acquisitions: b.count,
+    oreSites: b.oreSites,
+      percentage: toPercent(b.oreSites, totalOreSites),
   }))
 }
 
@@ -125,59 +129,28 @@ export function TimeDistributionChart({ acquisitions }: TimeDistributionChartPro
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-1 items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                {GROUP_LABELS[groupBy]}
-                <ChevronDownIcon className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              {available.map((g) => (
-                <DropdownMenuItem key={g} onClick={() => { setGroupBy(g); setWindowOffset(0) }}>
-                  {GROUP_LABELS[g]}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-8"
-              onClick={() => setWindowOffset((o) => o - 1)}
-              disabled={!canPrev}
-              aria-label="Previous period"
-            >
-              <ChevronLeftIcon className="size-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-8"
-              onClick={() => setWindowOffset((o) => o + 1)}
-              disabled={!canNext}
-              aria-label="Next period"
-            >
-              <ChevronRightIcon className="size-4" />
-            </Button>
-          </div>
-        </div>
-        {timeRangeLabel && (
-          <p className="shrink-0 text-sm text-muted-foreground">{timeRangeLabel}</p>
-        )}
-      </div>
+      <GroupByControls
+        available={available}
+        groupBy={groupBy}
+        timeRangeLabel={timeRangeLabel}
+        canPrev={canPrev}
+        canNext={canNext}
+        onGroupByChange={(g) => {
+          setGroupBy(g)
+          setWindowOffset(0)
+        }}
+        onPrev={() => setWindowOffset((o) => o - 1)}
+        onNext={() => setWindowOffset((o) => o + 1)}
+      />
 
       <div className="min-h-0 flex-1 pt-6">
         <ChartContainer config={chartConfig} className="aspect-auto h-full min-h-[200px] w-full">
-          <AreaChart
+          <BarChart
             accessibilityLayer
             data={chartData}
             margin={{ left: 0, right: 12 }}
-            animationDuration={250}
+            barCategoryGap="20%"
+            barGap={4}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <YAxis
@@ -204,20 +177,52 @@ export function TimeDistributionChart({ acquisitions }: TimeDistributionChartPro
                     const p = payload?.[0]?.payload as { label?: string } | undefined
                     return p?.label ?? value
                   }}
-                  formatter={(value) => [`${value}%`, 'Share']}
+                  formatter={(value, _name, item, _index, payload) => {
+                    const oreSites = (payload as { oreSites?: number })?.oreSites ?? 0
+                    const indicatorColor = item.payload?.fill ?? item.color ?? 'var(--color-percentage)'
+                    return (
+                      <div
+                        className={cn(
+                          'flex w-full flex-wrap items-stretch gap-2 [&_svg]:h-2.5 [&_svg]:w-2.5 [&_svg]:text-muted-foreground',
+                          'items-center'
+                        )}
+                      >
+                        <div
+                          className="shrink-0 h-2.5 w-2.5 rounded-[2px] border-(--color-border) bg-(--color-bg)"
+                          style={
+                            {
+                              '--color-bg': indicatorColor,
+                              '--color-border': indicatorColor,
+                            } as React.CSSProperties
+                          }
+                        />
+                        <div className="flex flex-1 justify-between leading-none items-center">
+                          <div className="grid gap-1.5">
+                            <span className="text-muted-foreground">Share</span>
+                            <span className="text-muted-foreground">Ore Sites</span>
+                          </div>
+                          <div className="grid gap-1.5 text-right">
+                            <span className="font-mono font-medium text-foreground tabular-nums">
+                              {value}%
+                            </span>
+                            <span className="font-mono font-medium text-foreground tabular-nums">
+                              {oreSites.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }}
                 />
               }
             />
-            <Area
-              type="monotone"
+            <Bar
               dataKey="percentage"
-              stroke="var(--color-percentage)"
               fill="var(--color-percentage)"
-              fillOpacity={0.4}
-              strokeWidth={2}
+              radius={4}
               animationDuration={250}
             />
-          </AreaChart>
+          </BarChart>
         </ChartContainer>
       </div>
     </div>
