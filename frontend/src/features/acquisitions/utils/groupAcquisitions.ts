@@ -44,8 +44,7 @@ function formatLabel(key: string, groupBy: GroupBy): string {
       return new Date(key).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     case 'week': {
       const d = new Date(key)
-      const end = new Date(d)
-      end.setDate(end.getDate() + 6)
+      const end = new Date(d.getTime() + 6 * 86400 * 1000)
       return `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
     }
     case 'month':
