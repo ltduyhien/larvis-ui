@@ -1,4 +1,4 @@
-import { Activity, FileText, Radio, Settings } from 'lucide-react'
+import { Activity, FileText, Settings } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { cn } from '@/shared/utils/cn'
@@ -30,7 +30,6 @@ function getDisplayName(userId: string): string {
 const navItems = [
   { to: '/activities', label: 'Activities', icon: Activity },
   { to: '/reports', label: 'Reporting', icon: FileText },
-  { to: '/space-command', label: 'Space Command', icon: Radio },
   { to: '/settings', label: 'Settings', icon: Settings },
 ] as const
 

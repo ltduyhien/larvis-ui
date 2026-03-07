@@ -91,7 +91,7 @@ export function groupAcquisitions(
   const endIdx = Math.min(totalBuckets, startIdx + step)
 
   const canPrev = startIdx > 0
-  const canNext = windowOffset < 0
+  const canNext = startIdx < maxStart
 
   const windowKeys = keys.slice(startIdx, endIdx)
   const data: ChartDataPoint[] = windowKeys.map((key) => {
