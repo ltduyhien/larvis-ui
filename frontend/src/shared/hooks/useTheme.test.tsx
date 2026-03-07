@@ -1,5 +1,6 @@
+/// <reference types="jest" />
 import { renderHook } from '@testing-library/react'
-import { ThemeProvider } from '@/app/providers/ThemeProvider'
+import { ThemeProvider } from '../../app/providers/ThemeProvider'
 import { useTheme } from './useTheme'
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (

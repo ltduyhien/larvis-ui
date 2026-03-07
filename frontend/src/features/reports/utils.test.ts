@@ -103,6 +103,25 @@ describe('loadReports', () => {
     const result = loadReports()
     expect(Object.keys(result).length).toBeGreaterThan(0)
   })
+
+  it('returns dummy reports when parsed value is array', () => {
+    ;(globalThis.localStorage.getItem as jest.Mock).mockReturnValue('[]')
+    const result = loadReports()
+    expect(Object.keys(result).length).toBeGreaterThan(0)
+  })
+
+  it('skips invalid entries in parsed object', () => {
+    const saved = {
+      '2025-0': { notes: 'OK', fileNames: [] },
+      '9999-0': { notes: 123, fileNames: [] },
+      '9999-1': null,
+    }
+    ;(globalThis.localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(saved))
+    const result = loadReports()
+    expect(result['2025-0']).toEqual({ notes: 'OK', fileNames: [] })
+    expect(result['9999-0']).toBeUndefined()
+    expect(result['9999-1']).toBeUndefined()
+  })
 })
 
 describe('saveReports', () => {

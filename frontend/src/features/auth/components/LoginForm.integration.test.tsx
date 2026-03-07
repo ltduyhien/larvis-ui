@@ -1,7 +1,7 @@
 jest.mock('@/shared/api/api-config', () => ({ getApiBaseUrl: () => '/api' }))
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter, MemoryRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from '@/app/providers/AuthProvider'
 import { ThemeProvider } from '@/app/providers/ThemeProvider'
 import { LoginForm } from './LoginForm'

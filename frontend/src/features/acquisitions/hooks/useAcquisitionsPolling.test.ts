@@ -41,7 +41,7 @@ describe('useAcquisitionsPolling', () => {
         })
     )
 
-    const { result, unmount } = renderHook(() => useAcquisitionsPolling())
+    const { unmount } = renderHook(() => useAcquisitionsPolling())
 
     unmount()
     act(() => {
