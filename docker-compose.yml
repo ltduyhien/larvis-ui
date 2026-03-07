@@ -24,7 +24,7 @@ services:
     # build: Points to the frontend/ directory with its own multi-stage Dockerfile
     # (Node to build, nginx to serve).
     ports:
-      - "5173:80"
+      - "5180:80"
       # ports: Maps host port 5173 → container port 80 (nginx).
       # 5173 matches Vite's default dev port so the URL stays familiar.
     depends_on:
