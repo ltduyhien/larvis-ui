@@ -1,43 +1,292 @@
-Main feature work:
+# LARVIS Station Terminal
 
-- Build UI flows around these endpoints:
-    - POST /token: Login with alice/bob/charlie + password 1234 to obtain an access token.
-    - GET /users: List all users (requires Authorization: Bearer <token>).
-    - GET /users/<user_id>: View a user profile including password (for yourself).
-    - POST /users/<user_id>: Update your own profile (name and password).
-    - GET /acquisitions: List last month’s satellite acquisitions (timestamp, sites), ideal for charts/histograms to visualize ore sites over time.
-- Reporting / analysis:
-    - In your README, discuss possible backend improvements (e.g., security, validation, error handling, schema design, auth model) and what you would enhance in the frontend if you had more time (UX polish, responsiveness, accessibility, advanced data viz, state management, etc.).
+> LARVIS: Hell-O hoo-man! Zank yOu for fixing me!
 
-## E2E Tests (Playwright)
+A React frontend for the **LARVIS** station API — a space-terminal UI for viewing satellite ore acquisitions, crew directory, and generating reports for Space Command.
 
-End-to-end tests run with Playwright and mock the LARVIS API, so no backend is required. Tests use port 5180 by default (set `PLAYWRIGHT_PORT` to override).
+**Tech:** TypeScript · Vite · shadcn/ui · Tailwind CSS
+
+---
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Development](#development)
+- [Production Deployment](#production-deployment)
+- [Testing](#testing)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Project Structure](#project-structure)
+- [Application Features](#application-features)
+- [Backend Improvement Suggestions](#backend-improvement-suggestions)
+- [Frontend Enhancements](#frontend-enhancements-future)
+
+---
+
+## Quick Start
+
+**Prerequisites:** Node.js 20+, npm, Docker, Docker Compose
+
+```bash
+docker compose up
+```
+
+| Service  | URL                          |
+|----------|------------------------------|
+| Frontend | http://localhost:5180        |
+| Backend  | http://localhost:8080        |
+
+> **Default credentials:** `alice` / `bob` / `charlie` — password `1234`
+
+---
+
+## Development
+
+### Frontend (with backend running)
 
 ```bash
 cd frontend
+npm install
+npm run dev
+```
+
+Opens at http://localhost:5173. Vite proxies `/api` to the backend.
+
+If the backend runs elsewhere, set `VITE_API_URL` in `.env`.
+
+### Backend only
+
+```bash
+./backend/larvis
+# Custom port: ./backend/larvis -addr :9090
+```
+
+Default port: **8080**
+
+---
+
+## Production Deployment
+
+**Docker Compose:**
+
+```bash
+docker compose up --build
+```
+
+- Frontend: nginx on port **5180**
+- Backend: port **8080**
+- `/api/` is proxied to the backend
+
+**Manual frontend build:**
+
+```bash
+cd frontend
+npm ci
+npm run build
+```
+
+Output: `frontend/dist`. Serve with any static host and configure the API base URL if needed.
+
+**Environment:**
+
+- `VITE_API_URL` — API base URL (default: `/api`)
+
+---
+
+## Testing
+
+### Unit tests (Jest)
+
+```bash
+cd frontend
+npm test
+```
+
+- `npm run test:watch` — watch mode  
+- `npm run test:coverage` — coverage report
+
+### E2E tests (Playwright)
+
+E2E tests mock the API — no backend required.
+
+```bash
+cd frontend
+npx playwright install   # First time
 npm run test:e2e
 ```
 
-Playwright starts the dev server automatically if nothing is listening.
+| Script                          | Purpose                          |
+|---------------------------------|----------------------------------|
+| `npm run test:e2e`              | All browsers                     |
+| `npm run test:e2e:chromium`     | Chromium only (faster)           |
+| `npm run test:e2e:ui`           | Interactive UI mode              |
+| `npm run test:e2e:visual`       | Visual regression                |
+| `npm run test:e2e:update-snapshots` | Update snapshots            |
 
-| Script | Description |
-|--------|-------------|
-| `test:e2e` | Run all tests (Chromium, Firefox, WebKit, Mobile) |
-| `test:e2e:chromium` | Run in Chromium only (faster) |
-| `test:e2e:ui` | Interactive UI mode |
-| `test:e2e:visual` | Run visual regression tests only |
-| `test:e2e:update-snapshots` | Generate visual snapshots (run once before visual tests) |
+Port: `PLAYWRIGHT_PORT` (default 5180). Dev server starts automatically.
 
-**Coverage:**
-- Authentication: login, logout, validation, redirect
-- Reusing auth: `loginAs()` helper (app uses in-memory token, so login per test)
-- Form validation: Settings (password change, humor slider), Reports (notes)
-- Navigation and routing
-- API mocking: token, users, acquisitions, change password
-- Waiting: Playwright auto-waits; explicit `expect` timeouts
-- Visual regression: `toHaveScreenshot` for login, activities, settings
-- Mobile: Pixel 5 viewport; cross-browser (Firefox, WebKit)
+---
 
-Install browsers: `npx playwright install` (or `npx playwright install chromium` for Chromium only)
+## CI/CD Pipeline
 
+**File:** `.github/workflows/ci.yml`  
+**Triggers:** Push and PRs to `main` or `master`
 
+| Step  | Command                       |
+|-------|-------------------------------|
+| Lint  | `npm run lint`                |
+| Unit  | `npm test`                    |
+| Build | `npm run build`               |
+| E2E   | `npm run test:e2e:chromium`   |
+
+All run in `frontend/` on Node 20.
+
+---
+
+## Project Structure
+
+```
+larvis/
+├── .github/workflows/ci.yml
+├── backend/
+│   ├── Dockerfile
+│   └── larvis                    # Pre-compiled API binary
+├── frontend/
+│   ├── e2e/                      # Playwright tests
+│   │   ├── api-mock.ts
+│   │   ├── auth-helper.ts
+│   │   ├── auth.spec.ts
+│   │   ├── forms.spec.ts
+│   │   ├── mobile.spec.ts
+│   │   ├── navigation.spec.ts
+│   │   └── visual.spec.ts
+│   ├── public/theme-init.js
+│   ├── src/
+│   │   ├── app/                  # Layout, providers, router
+│   │   ├── features/             # auth, acquisitions, reports, settings, users
+│   │   ├── pages/
+│   │   └── shared/               # api, ui, hooks, utils, types
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+├── docker-compose.yml
+└── README.md
+```
+
+**Layers (simplified FSD):**
+
+- **app/** — Layout, auth, theme, routing  
+- **pages/** — Screen compositions  
+- **features/** — Domain logic and UI (import only from `shared`)  
+- **shared/** — API client, components, utilities
+
+---
+
+## Application Features
+
+### Login
+
+- Username + password form
+- LARVIS greeting
+- Redirect on success, error on invalid credentials
+- Token in memory (XSS-safe, no localStorage)
+
+### Dashboard (Activities)
+
+- Summary cards: total scans, average ore sites, peak, trend, sparklines
+- Line chart: ore sites over time, brush/zoom
+- Histogram: distribution of ore counts
+- Bar chart: daily aggregation
+- Heatmap: GitHub-style calendar
+- Data table: sort, search, paginate, CSV export
+- Date range filter for all charts
+
+### Crew Directory
+
+- Crew list (cards/table)
+- Profile view: read-only for others, editable for self
+- Edit name and password on own profile
+
+### Reports
+
+- Print-friendly layout
+- Stats, charts, trend analysis
+- Auto-generated text summary
+- Month selector, editable notes
+- Export/print
+
+### Settings
+
+- Profile editing (name, password)
+- Humor slider (LARVIS personality)
+- Password validation
+
+### Cross-cutting
+
+Responsive layout · Dark theme · Toasts · Skeleton loaders · CSP · Sanitized chart rendering
+
+### Tech stack
+
+| Layer   | Technology              |
+|---------|-------------------------|
+| Framework | React 19 + TypeScript |
+| Build   | Vite 7                  |
+| UI      | shadcn/ui, Tailwind     |
+| Charts  | Recharts                |
+| Routing | React Router 7          |
+| Tests   | Jest, Playwright        |
+
+---
+
+## Backend Improvement Suggestions
+
+The LARVIS API is a pre-compiled binary. Suggestions for a production-ready version:
+
+### Security
+
+- **Passwords:** Don’t return plaintext; hash with bcrypt/argon2 and never expose in `GET /users/:id`
+- **JWT:** Short expiry (15–30 min), refresh tokens, validate `sub` / `exp` / `iat`
+- **Auth:** Per-user credentials, optional role-based access
+- **CORS:** Explicit `Access-Control-Allow-Origin` for known frontends
+- **Rate limiting:** On `/token`, `/users`, `/acquisitions`
+
+### Validation & error handling
+
+- **Input:** Validate body/query (length, format, types)
+- **Errors:** Standard JSON `{ "error": "code", "message": "..." }` with correct HTTP status (400, 401, 403, 404, 500)
+- **Messages:** Clear, safe, no internal details
+
+### Schema & API design
+
+- **Consistency:** Docs use `sites`, response uses `ore_sites` — align and document (e.g. OpenAPI)
+- **Pagination:** Add `?limit`, `?offset` (or cursor) for `/acquisitions`
+- **Filtering:** `?from=`, `?to=` for acquisitions; optional `?search=` for users
+- **Versioning:** Path (`/v1/`) or header
+
+### Operational
+
+- **Health:** `GET /health` or `/ready`
+- **Logging:** Structured logs (request id, user, status, duration)
+- **Metrics:** Latency, error rate for monitoring
+
+### Data & storage
+
+- **Persistence:** Database (Postgres, SQLite) instead of in-memory
+- **Idempotency:** Keys for `POST` updates where appropriate
+
+---
+
+## Frontend Enhancements (Future)
+
+- UX polish: animations, accessibility (ARIA, keyboard)
+- Mobile: better tap targets, layout
+- Viz: more chart types, drill-down, zoom/pan
+- State: TanStack Query if needed for caching/refetch
+- Offline: PWA, service worker
+- i18n
+- E2E against real API (e.g. via `docker compose`)
+
+---
+
+## License
+
+[LICENSE](LICENSE)
