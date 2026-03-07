@@ -14,6 +14,7 @@ export function useAcquisitionsPolling() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
   const [hasNewData, setHasNewData] = useState(false)
+  const [connectedSince, setConnectedSince] = useState<number | null>(null)
   const lastFingerprint = useRef<string | null>(null)
 
   const fetchAcquisitions = useCallback(async (showLoading = true) => {
@@ -21,6 +22,7 @@ export function useAcquisitionsPolling() {
     try {
       setError(null)
       const data = await getAcquisitions()
+      setConnectedSince((prev) => prev ?? Date.now())
       const fp = fingerprint(data)
 
       if (lastFingerprint.current !== null && lastFingerprint.current !== fp) {
@@ -58,6 +60,7 @@ export function useAcquisitionsPolling() {
     isLoading,
     error,
     hasNewData,
+    connectedSince,
     dismissNewData,
     refresh,
   }

@@ -50,7 +50,7 @@ export function LoginForm() {
     setIsLoading(true)
     try {
       await login(userId, password)
-      navigate('/dashboard', { replace: true })
+      navigate('/activities', { replace: true })
     } catch {
       setError(ERROR_INVALID_CREDENTIALS)
     } finally {

@@ -16,17 +16,15 @@ import { ProtectedRoute } from './ProtectedRoute'
 // ProtectedRoute: Route guard — redirects to /login if the user isn't authenticated.
 
 import { LoginPage } from '@/pages/LoginPage'
-import { DashboardPage } from '@/pages/DashboardPage'
-// Page components — each one is a composition of features displayed at a specific URL.
+import { ActivitiesPage } from '@/pages/ActivitiesPage'
+import { ReportsPage } from '@/pages/ReportsPage'
+import { SpaceCommandPage } from '@/pages/SpaceCommandPage'
+import { SettingsPage } from '@/pages/SettingsPage'
 
 export const router = createBrowserRouter([
-  // createBrowserRouter: Takes an array of route objects defining the URL → component mapping.
-  // Routes are nested — child routes render inside their parent's <Outlet />.
-
   {
     path: '/',
-    element: <Navigate to="/dashboard" replace />,
-    // Root path (/) redirects to /dashboard.
+    element: <Navigate to="/activities" replace />,
     // replace: Don't add / to the history stack — pressing back won't loop back here.
   },
 
@@ -49,12 +47,10 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         // MainLayout provides the sidebar + header shell for authenticated pages.
         children: [
-          {
-            path: '/dashboard',
-            element: <DashboardPage />,
-            // /dashboard → the ore acquisitions dashboard (charts, stats, table).
-          },
-          // TODO: /users, /users/:id, /report routes will be added here.
+          { path: '/activities', element: <ActivitiesPage /> },
+          { path: '/reports', element: <ReportsPage /> },
+          { path: '/space-command', element: <SpaceCommandPage /> },
+          { path: '/settings', element: <SettingsPage /> },
         ],
       },
     ],

@@ -6,6 +6,8 @@
 
 @theme inline {
     /* Mars station custom palette — change these to retheme the entire app */
+    --transition-duration: 250ms;
+    --tw-duration: 250ms;
     --color-mars-500: oklch(0.62 0.14 45);
     --color-mars-600: oklch(0.55 0.14 45);
     --color-mars-700: oklch(0.48 0.14 45);
@@ -131,10 +133,26 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
+  button,
+  input,
+  [role="button"] {
+    cursor: pointer;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  textarea {
+    cursor: text;
+  }
+  html, body, #root {
+    height: 100%;
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
 }
 
 /* Keep autofill styling aligned with theme (Input glass / mars-input-bg) */
