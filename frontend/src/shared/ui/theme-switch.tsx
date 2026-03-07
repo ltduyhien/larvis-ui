@@ -2,29 +2,15 @@
 // Sun icon when dark (click to go light), moon icon when light (click to go dark).
 
 import { useTheme } from '@/shared/hooks/useTheme'
-// useTheme: Supplies theme and toggleTheme from ThemeProvider.
-
-function applyThemeToDocument(next: 'dark' | 'light') {
-  const root = document.documentElement
-  root.classList.remove('light', 'dark')
-  root.classList.add(next)
-}
 
 export function ThemeSwitch() {
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
-  // theme: Current theme. toggleTheme: Flips dark <-> light and persists.
-
-  function handleClick() {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    applyThemeToDocument(next)
-    toggleTheme()
-  }
 
   return (
     <button
       type="button"
-      onClick={handleClick}
+      onClick={toggleTheme}
       className={`fixed bottom-4 right-4 z-50 flex size-10 cursor-pointer items-center justify-center rounded-full border backdrop-blur-sm transition-colors ${
         isDark
           ? 'border-white/20 bg-black/40 text-white hover:bg-black/60'
