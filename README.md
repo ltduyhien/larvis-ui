@@ -9,14 +9,15 @@ A React frontend for the LARVIS station API — a space-terminal UI for viewing 
 Table of Contents
 
 1. Quick Start
-2. Development
-3. Production Deployment
-4. Testing
-5. CI/CD Pipeline
-6. Project Structure
-7. Application Features
-8. Backend Improvement Suggestions
-9. Frontend Enhancements (Future)
+2. UI Design Prototype
+3. Development
+4. Production Deployment
+5. Testing
+6. CI/CD Pipeline
+7. Project Structure
+8. Application Features
+9. Backend Improvement Suggestions
+10. Frontend Enhancements (Future)
 
 ---
 
@@ -49,7 +50,13 @@ Default credentials: alice / bob / charlie — password 1234.
 
 ---
 
-2. Development
+2. UI Design Prototype
+
+https://www.figma.com/design/eEqGXVU3a1PRQDG63Wky47/Larvis?node-id=3002-3019&t=Mmz3fIyyS4BZk2bC-1
+
+---
+
+3. Development
 
 Frontend only (API proxied to backend)
 
@@ -67,7 +74,7 @@ API base URL: Set VITE_API_URL in .env (e.g. http://localhost:8080) if the backe
 
 ---
 
-3. Production Deployment
+4. Production Deployment
 
 Docker Compose
 
@@ -96,7 +103,7 @@ Environment variables
 
 ---
 
-4. Testing
+5. Testing
 
 Unit tests (Jest)
 
@@ -131,7 +138,7 @@ Coverage: Auth (login, logout, validation), form validation, navigation, API moc
 
 ---
 
-5. CI/CD Pipeline
+6. CI/CD Pipeline
 
 GitHub Actions workflow: .github/workflows/ci.yml
 
@@ -148,7 +155,7 @@ All run in frontend/ on Node 20. E2E uses Playwright's built-in dev server and m
 
 ---
 
-6. Project Structure
+7. Project Structure
 
 ```text
 larvis/
@@ -208,7 +215,7 @@ Folder structure notes
 
 ---
 
-7. Application Features
+8. Application Features
 
 Login
 
@@ -250,7 +257,7 @@ Tech stack
 
 ---
 
-8. Backend Improvement Suggestions
+9. Backend Improvement Suggestions
 
 The LARVIS API is provided as a pre-compiled binary. The following improvements would make it more production-ready and secure:
 
@@ -304,7 +311,7 @@ As satellites and data volume grow, the current design may hit limits. Possible 
 
 ---
 
-9. Frontend Enhancements (Future)
+10. Frontend Enhancements (Future)
 
 If there were more time, the frontend could be improved with:
 
